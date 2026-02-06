@@ -10,13 +10,9 @@ depends=('python' 'wine' 'playerctl' 'python-dbus-next')
 provides=('winamp-mpris')
 conflicts=()
 replaces=()
-source=(
-  "winamp-mpris.py"
-  "winamp-mpris.service"
-  "clamp.exe::https://winampheritage.com/plugin/144432/CLAmp.exe"
-)
+source=(git+${url}.git#branch=main)
 
-sha256sums=('SKIP' 'SKIP' 'SKIP' 'SKIP')
+sha256sums=('SKIP')
 
 prepare() {
   cd "$srcdir"
@@ -24,8 +20,8 @@ prepare() {
 }
 
 package() {
-  cd "$srcdir"
-
+  cd "${srcdir}/${pkgname}"
+  pwd
   install -Dm755 winamp-mpris.py "$pkgdir/usr/bin/winamp-mpris"
 
   install -Dm644 winamp-mpris.service "$pkgdir/usr/lib/systemd/user/winamp-mpris.service"
