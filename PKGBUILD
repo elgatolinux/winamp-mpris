@@ -14,7 +14,7 @@ source=(git+${url}.git#branch=main)
 sha256sums=('SKIP')
 pkgver() {
   cd "$srcdir/$pkgname"
-  printf "r%s.%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+  git describe --long --tags | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g'
 }
 
 prepare() {
@@ -31,13 +31,12 @@ package() {
   
   # Instalar el script principal (nombre correcto con guion bajo)
   install -Dm755 winamp_mpris.py "$pkgdir/usr/bin/winamp-mpris"
-  
   # Instalar el servicio de systemd
   install -Dm644 winamp-mpris.service "$pkgdir/usr/lib/systemd/user/winamp-mpris.service"
   
   # Instalar clamp.exe si existe
-  if [ -f "clamp.exe" ]; then
-    install -Dm644 clamp.exe "$pkgdir/usr/share/winamp-mpris/clamp.exe"
+  if [ -f "CLAmp.exe" ]; then
+    mkdir "$pkgdir/usr/share/" &&  install -Dm644 CLAmp.exe "$pkgdir/usr/share/winamp-mpris/CLAmp.exe"
   fi
   
   # Instalar LICENSE si existe
@@ -49,4 +48,7 @@ package() {
   if [ -f "README.md" ]; then
     install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
   fi
+
+  echo -e "\033[0;31m please run systemctl --user enable winamp-mpris.service && systemctl --user start winamp-mpris.service after the installation"
+  
 }
